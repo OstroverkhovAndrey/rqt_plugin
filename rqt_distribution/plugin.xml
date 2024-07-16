@@ -6,6 +6,8 @@
     <qtgui>
       <group>
         <label>Visualization</label>
+        <icon type="theme">folder</icon>
+        <statustip>Plugins related to visualization.</statustip>
       </group>
       <label>Distribution</label>
       <icon type="theme">system-help</icon>
