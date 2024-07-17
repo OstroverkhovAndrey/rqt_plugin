@@ -15,12 +15,13 @@ setup(
     zip_safe=True,
     maintainer='Andrey Ostroverkhov',
     maintainer_email='andrey26052001@gmail.com',
-    description='TODO: Package description',
+    description='Package for test distribution plugin',
     license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'norm_distr_pub = norm_distr_pub.norm_distr_pub:main',
+            'pseudo_norm_distr_pub = norm_distr_pub.pseudo_norm_distr_pub:main',
         ],
     },
 )

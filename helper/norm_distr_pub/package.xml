@@ -3,8 +3,8 @@
 <package format="3">
   <name>norm_distr_pub</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="andrey26052001@gmail.com">xiaomi</maintainer>
+  <description>Package for test distribution plugin</description>
+  <maintainer email="andrey26052001@gmail.com">Andrey Ostroverkhov</maintainer>
   <license>Apache-2.0</license>
 
   <exec_depend>rclpy</exec_depend>
