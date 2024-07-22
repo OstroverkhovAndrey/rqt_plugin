@@ -15,6 +15,8 @@ class Distribution(Plugin):
         self._widget = DistributionWidget(self._node)
         self._hist = DistributionHist(self._widget)
         self._widget.switch_data_plot_widget(self._hist)
-        self._widget.setWindowTitle("Distribution")
+        if context.serial_number() > 1:
+            self._widget.setWindowTitle(
+                self._widget.windowTitle() + (' (%d)' % context.serial_number()))
 
         context.add_widget(self._widget)

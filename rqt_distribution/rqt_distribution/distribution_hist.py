@@ -5,7 +5,11 @@ from python_qt_binding.QtWidgets import QWidget, QVBoxLayout, QSizePolicy
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+import random
 
+
+colors = ["blue", "orange", "green", "red", "purple",
+          "pink", "gray", "olive", "cyan"]
 class DistributionHist(QWidget):
 
     class Canvas(FigureCanvas):
@@ -42,12 +46,11 @@ class DistributionHist(QWidget):
         vbox.addWidget(self._toolbar)
         vbox.addWidget(self._canvas)
         self.setLayout(vbox)
+        self.color = random.choice(colors)
 
-        self._curves = {}
-        self._current_vline = None
+        #self._curves = {}
+        #self._current_vline = None
         self._canvas.mpl_connect('button_release_event', self._limits_changed)
-        self.set_xlim([-5, 5])
-        self.set_ylim([-1, 15])
         self.data = []
         self.redraw()
         self.show()
@@ -56,6 +59,7 @@ class DistributionHist(QWidget):
         self.limits_changed.emit()
 
     def add_curve(self, curve_id, curve_name, curve_color=QColor(Qt.blue), markers_on=False):
+        pass
 
         # adding an empty curve and change the limits, so save and restore them
         #x_limits = self.get_xlim()
@@ -74,8 +78,8 @@ class DistributionHist(QWidget):
         #self._canvas.axes.hist(s, 30)
         #self._curves[curve_id] = line
         #self._update_legend()
-        self.set_xlim([-5, 5])
-        self.set_ylim([-1, 15])
+        #self.set_xlim([-5, 5])
+        #self.set_ylim([-1, 15])
 
     def remove_curve(self, curve_id):
         curve_id = str(curve_id)
@@ -92,37 +96,39 @@ class DistributionHist(QWidget):
         self._canvas.axes.legend(handles, labels, loc='upper left')
 
     def set_values(self, curve, data_x, data_y):
-        self.data.append(data_y[0])
-        #print(self.data)
+        for y in data_y:
+            self.data.append(y)
         if hasattr(self, "hist"):
             self.hist.remove()
-        #mu, sigma = 0, 0.1 # mean and standard deviation
-        #s = np.random.normal(mu, sigma, 1000)
         if len(self.data) > 0:
-            self.hist = self._canvas.axes.hist(self.data, 30, density=True)[2]
-        #print(self.hist)
-        #line = self._curves[curve]
-        #line.set_data(data_x, data_y)
+            y_size, x_size, self.hist = self._canvas.axes.hist(self.data,
+                                                               bins=30,
+                                                               density=True,
+                                                               color=self.color)
+            y_max = max(y_size)
+            y_max_index = [i for i, j in enumerate(y_size) if j == y_max]
+            self.set_ylim([-0.1*y_max, 1.1*y_max])
+            x_left_border = x_size[y_max_index[0]] - 1.1 *\
+                max(x_size[-1] - x_size[y_max_index[0]],
+                    x_size[y_max_index[0]] - x_size[0])
+            x_right_border = x_size[y_max_index[-1]] + 1.1 *\
+                max(x_size[-1] - x_size[y_max_index[-1]],
+                    x_size[y_max_index[-1]] - x_size[0])
+            self.set_xlim([x_left_border, x_right_border])
 
     def redraw(self):
         self._canvas.axes.grid(True, color='gray')
         self._canvas.draw()
 
-    def vline(self, x, color):
-        # convert color range from (0,255) to (0,1.0)
-        matcolor = (color[0] / 255.0, color[1] / 255.0, color[2] / 255.0)
-        if self._current_vline:
-            self._current_vline.remove()
-        self._current_vline = self._canvas.axes.axvline(x=x, color=matcolor)
+    #def vline(self, x, color):
+    #    # convert color range from (0,255) to (0,1.0)
+    #    matcolor = (color[0] / 255.0, color[1] / 255.0, color[2] / 255.0)
+    #    if self._current_vline:
+    #        self._current_vline.remove()
+    #    self._current_vline = self._canvas.axes.axvline(x=x, color=matcolor)
 
     def set_xlim(self, limits):
         self._canvas.axes.set_xbound(lower=limits[0], upper=limits[1])
 
     def set_ylim(self, limits):
         self._canvas.axes.set_ybound(lower=limits[0], upper=limits[1])
-
-    def get_xlim(self):
-        return list(self._canvas.axes.get_xbound())
-
-    def get_ylim(self):
-        return list(self._canvas.axes.get_ybound())

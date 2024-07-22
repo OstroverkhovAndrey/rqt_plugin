@@ -147,7 +147,7 @@ def is_plottable(node, topic_name):
 
 
 class DistributionWidget(QWidget):
-    _redraw_interval = 40
+    _redraw_interval = 400
     def __init__(self, node):
         super(DistributionWidget, self).__init__()
 
